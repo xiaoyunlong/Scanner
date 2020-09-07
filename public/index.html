@@ -39,7 +39,7 @@
   <script src="./index.js"></script>
   </body>
   <script>
-    const video = document.querySelector("video");
+const video = document.querySelector("video");
 const canvas = document.querySelector("canvas");
 const take = document.querySelector("#take");
 
@@ -71,7 +71,7 @@ const drawImage = () => {
     }
   };
 };
-
+video.addEventListener('timeupdate',drawImage);
 take.addEventListener("click", drawImage);
 
 const barcodeDecode = (src) => {
@@ -97,15 +97,14 @@ var config = {
 
  Quagga.decodeSingle(config, function(result) {
           if(!result){
-             alert("图片中没有条形码！");
+            //  alert("图片中没有条形码和二维码！");
              return false;
           }
           //识别结果
           if(result.codeResult){
-              console.log("图片中的条形码为："+result.codeResult.code);
               alert("图片中的条形码为：" + result.codeResult.code);
           }else{
-              alert("未识别到图片中的条形码！");
+              // alert("未识别到图片中的条形码！");
           }
  });
 
