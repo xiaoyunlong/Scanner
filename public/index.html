@@ -7,7 +7,26 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
+    <script type="text/javascript" src="./qrcode/grid.js"></script>
+    <script type="text/javascript" src="./qrcode/version.js"></script>
+    <script type="text/javascript" src="./qrcode/detector.js"></script>
+    <script type="text/javascript" src="./qrcode/formatinf.js"></script>
+    <script type="text/javascript" src="./qrcode/errorlevel.js"></script>
+    <script type="text/javascript" src="./qrcode/bitmat.js"></script>
+    <script type="text/javascript" src="./qrcode/datablock.js"></script>
+    <script type="text/javascript" src="./qrcode/bmparser.js"></script>
+    <script type="text/javascript" src="./qrcode/datamask.js"></script>
+    <script type="text/javascript" src="./qrcode/rsdecoder.js"></script>
+    <script type="text/javascript" src="./qrcode/gf256poly.js"></script>
+    <script type="text/javascript" src="./qrcode/gf256.js"></script>
+    <script type="text/javascript" src="./qrcode/decoder.js"></script>
+    <script type="text/javascript" src="./qrcode/qrcode.js"></script>
+    <script type="text/javascript" src="./qrcode/findpat.js"></script>
+    <script type="text/javascript" src="./qrcode/alignpat.js"></script>
+    <script type="text/javascript" src="./qrcode/databr.js"></script>
+    <script src="quagga.js"> </script>
+
+    <title>Scanner</title>
   </head>
   <body>
     <p id="message"></p>
@@ -19,4 +38,78 @@
     <input style="display: none;" type="file" accept="image/*" />
   <script src="./index.js"></script>
   </body>
+  <script>
+    const video = document.querySelector("video");
+const canvas = document.querySelector("canvas");
+const take = document.querySelector("#take");
+
+const drawImage = () => {
+  canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+  var opts = {
+    errorCorrectionLevel: "H",
+    type: "image/jpeg",
+    quality: 0.3,
+    margin: 1,
+    color: {
+      dark: "#010599FF",
+      light: "#FFBF60FF",
+    },
+  };
+
+  qrcode.decode(canvas.toDataURL("image/png"));
+
+  qrcode.callback = function (data) {
+    if (data == "error decoding QR Code") {
+      barcodeDecode(canvas.toDataURL('image/png'))
+    } else {
+    //   video.removeEventListener("timeupdate", checkCode);
+    //   video.pause();
+      alert(data);
+      document.getElementById("message").innerText =
+        "第" + count + "次成功:" + data;
+      //location.href = data;
+    }
+  };
+};
+
+take.addEventListener("click", drawImage);
+
+const barcodeDecode = (src) => {
+
+var config = {
+      inputStream: {
+      size: 800,
+      singleChannel: false
+      },
+      locator: {
+          patchSize: "medium",
+          halfSample: true
+         },
+       decoder: {
+          readers: [{
+               format: "code_39_reader",
+               config: {}
+              }]
+          },
+       locate: true,
+        src: src
+ }
+
+ Quagga.decodeSingle(config, function(result) {
+          if(!result){
+             alert("图片中没有条形码！");
+             return false;
+          }
+          //识别结果
+          if(result.codeResult){
+              console.log("图片中的条形码为："+result.codeResult.code);
+              alert("图片中的条形码为：" + result.codeResult.code);
+          }else{
+              alert("未识别到图片中的条形码！");
+          }
+ });
+
+}
+
+  </script>
 </html>
